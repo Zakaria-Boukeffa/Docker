@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend  
+      dockerfile: Dockerfile  
+    container_name: todo_backend
+    depends_on:
+      - mysql    
+    environment:
+      - FLASK_APP=flaskr:create_app
+      - FLASK_ENV=production
+      - DATABASE_URL=mysql+pymysql://todo_user:todo_password@mysql/todo_db 
+    volumes:
+      - ./backend:/app  
+    ports:
+      - "5000:5000" 
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"] 
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - todo_network
+
+  frontend:
+    build:
+      context: ./frontend  
+      dockerfile: Dockerfile  
+    container_name: todo_frontend
+    environment:
+      - NODE_ENV=production  
+    volumes:
+      - ./frontend:/app 
+    ports:
+      - "4200:80"  
+    depends_on:
+      - backend  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"] 
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - todo_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: todo_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: todo_db
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - todo_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: todo_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: todo_user
+      PMA_PASSWORD: todo_password
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - todo_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: todo_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - todo_network
+
+volumes:
+  mysql_data:
+
+networks:
+  todo_network:
+    driver: bridge

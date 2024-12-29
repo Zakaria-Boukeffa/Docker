@@ -1,89 +1,75 @@
-## Built with
+# **TodoApp**
 
-The project was developed from scratch with Frontend and Backend technologies, for the communication between the client and the server I implemented a REST API, which is responsible for returning the necessary data in JSON format to the client:
+TodoApp is a full-stack application for managing tasks, consisting of a Flask backend, an Angular frontend, and a MySQL database. The project is containerized using Docker and orchestrated with Docker Compose for ease of deployment and management.
 
-- Frontend:
-  - Angular
-  - SCSS
-  - PrimeNG Components
+---
 
-- Backend:
-  - Python (Flask)
-  - SQLite (As database manager)
-  - Flask Migrate (To perform migrations)
-  - SQLAlchemy and Flask SQLAlchemy (Python SQL toolkit and ORM that gives application developers the full power and flexibility of SQL)
-  - REST API (For communication between client and server)
+## **Project Structure**
 
-## Project requirements and how to use it
+The project is organized into the following directories and files:
 
-For the project you must run both development environments at the same time, both the Frontend and the Backend. In the Frontend you will find JavaScript technologies (Angualr) and in the Backend you will find Python technologies and tools (Flask), so you must have NodeJS and Python installed on your computer (As a reference this project was developed with version 3.9.6 of Python and 18.12.1 of NodeJS).
+- **`backend/`**: Contains the Flask application that handles the API and business logic.
+- **`frontend/`**: Contains the Angular application that provides the user interface.
+- **`docker-compose.yml`**: Orchestrates all the services and dependencies.
+- **`nginx.conf`**: Configuration file for Nginx, used as a reverse proxy.
 
-I leave you links to NodeJS and Python for installation:
-  - [NodeJS website](https://nodejs.org/en/)
-  - [Python website](https://www.python.org/)
+---
 
-First of all download the project to start using it, do it from the terminal:
+## **Services**
 
-```shell
-$ git clone https://github.com/Skizaru/todo_app.git
+The application stack includes the following services:
 
-$ cd todo_app
-```
+### **1. Backend**
+- **Purpose**: Hosts the API using Flask.
+- **Configuration**:
+  - Built from the `Dockerfile` in `backend/`.
+  - Uses environment variables to configure the Flask app and database connection.
+  - Exposes port `5000` for API access.
+- **Healthcheck**: Monitors API availability at `/health`.
 
-If you did it correctly and there were no problems, you should see these folders in your terminal:
+### **2. Frontend**
+- **Purpose**: Hosts the Angular application for the user interface.
+- **Configuration**:
+  - Built from the `Dockerfile` in `frontend/`.
+  - Exposes port `4200` for the user interface.
+- **Healthcheck**: Ensures the Angular app is reachable.
 
-```shell
-/backend
-/frontend
-README.md
+### **3. MySQL**
+- **Purpose**: Provides the relational database for storing application data.
+- **Configuration**:
+  - Runs MySQL version 8.0.
+  - Database credentials are defined in the `docker-compose.yml` file.
+  - Persistent data is stored in the named volume `mysql_data`.
 
-### Frontend
+### **4. phpMyAdmin**
+- **Purpose**: Provides a web-based interface to manage the MySQL database.
+- **Configuration**:
+  - Uses the phpMyAdmin image.
+  - Accessible on port `8081`.
 
-If you already have NodeJS installed on your computer perform the following steps to run the Frontend (Remember that the Backend must be running):
+### **5. Nginx**
+- **Purpose**: Acts as a reverse proxy for the backend and frontend.
+- **Configuration**:
+  - Configured with `nginx.conf`.
+  - Exposes the main application on port `80`.
 
-1. Move to the `/frontend` folder and run the following command to install the necessary:
+---
 
-```shell
-# This will install what you need for the Frontend (npm comes with NodeJS after installation)
-$ npm install
-```
+## **Setup Instructions**
 
-2. Then you will need to run the following command to start running the Frontend:
+### **Prerequisites**
+Make sure you have the following installed:
+- **Docker**: [Install Docker](https://www.docker.com/)
+- **Docker Compose**: [Install Docker Compose](https://docs.docker.com/compose/)
 
-```shell
-$ npm start
-```
-
-3. That's all for the Frontend, if you haven't run the Backend yet, continue with the next section (Backend)
-
-### Backend
-
-If you already have Python installed on your computer perform the following steps to run the Backend
-
-1. Move to the `/backend` folder and run the following command to create a virtual development environment with Python:
-
-```shell
-# If it doesn't work this way try "python3", this will depend on how you installed Python on your computer
-$ python -m venv venv
-```
-
-2. Now activate the development environment and install the necessary requirements found in the `requirements.txt` file:
-
-```shell
-# This is how it is done in Linux, in Windows it is as follows "venv\Scripts\activate"
-$ . venv/bin/activate
-# Now install the necessary requirements using "pip" or "pip3",
-# this will depend on how you installed Python on your computer
-(venv) $ pip install -r requirements.txt
-
-### REST API
-
-Everything related to the API is inside `flaskr/`. The following table summarizes the routes that were implemented:
-
-| HTTP Method | Resource URL           | Notes                                   |
-| ----------- | -------------------    | --------------------------------------- |
-| `GET`       | */api/v1/tasks*        | Return the collection of all tasks.     |
-| `GET`       | */api/v1/tasks/id*     | Return a single task.                   |
-| `POST`      | */api/v1/tasks*        | Register a new task.                    |
-| `PUT`       | */api/v1/tasks/id*     | Modify the values of a task.            |
-| `DELETE`    | */api/v1/tasks/id*     | Delete a task from the collection.      |
+### **Steps to Run**
+1. Clone the repository:
+   ```bash
+   git clone <repository_url>
+   cd <repository_folder>
+  ```
+  Start docker desktop 
+  then in vscode , do 
+  ```
+  docker-compose up --build
+  ```

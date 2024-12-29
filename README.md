@@ -67,9 +67,8 @@ Make sure you have the following installed:
    ```bash
    git clone <repository_url>
    cd <repository_folder>
-  ```
+ 
   Start docker desktop 
   then in vscode , do 
-  ```
+ ```bash
   docker-compose up --build
-  ```
